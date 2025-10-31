@@ -35,31 +35,40 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzvZikzb1lPf3z7hAhua9OafAhPH5NXhF43PTrCLqYFwSP7Mhc9S8jIWPiZtutxz5_Z/exec';
     
-    document.getElementById("prayerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const data = {
-        name: document.getElementById("name").value,
-        fajr: document.getElementById("fajr").value,
-        dhuhr: document.getElementById("dhuhr").value,
-        asr: document.getElementById("asr").value,
-        maghrib: document.getElementById("maghrib").value,
-        isha: document.getElementById("isha").value,
-      };
+   const form = document.getElementById("prayerForm");
+  const responseEl = document.getElementById("response");
 
-      const res = await fetch(scriptURL, {
-        method: "POST",
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      body: params,          
-      });
+    // إمّا URLSearchParams (أضمن لتفادي preflight)
+    const params = new URLSearchParams();
+    params.append('name', document.getElementById("name").value);
+    params.append('fajr', document.getElementById("fajr").value);
+    params.append('dhuhr', document.getElementById("dhuhr").value);
+    params.append('asr', document.getElementById("asr").value);
+    params.append('maghrib', document.getElementById("maghrib").value);
+    params.append('isha', document.getElementById("isha").value);
 
-      if (res.ok) {
-        document.getElementById("response").classList.remove("hidden");
-        document.getElementById("prayerForm").reset();
-      }
+    // أو بديل: FormData (مقبول أيضًا وبسيط)
+    // const params = new FormData(form);
+
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      body: params, // مهم: لا تضع headers يدوياً حتى لا يحدث preflight
     });
-  </script>
+
+    if (res.ok) {
+      responseEl.classList.remove("hidden");
+      form.reset();
+    } else {
+      alert('فشل الإرسال. Status: ' + res.status);
+    }
+  });
+</script>
 </body>
 </html>
+
 
 
 
