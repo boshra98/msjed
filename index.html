@@ -35,13 +35,9 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzvZikzb1lPf3z7hAhua9OafAhPH5NXhF43PTrCLqYFwSP7Mhc9S8jIWPiZtutxz5_Z/exec';
     
-   const form = document.getElementById("prayerForm");
-  const responseEl = document.getElementById("response");
-
-  form.addEventListener("submit", async (e) => {
+   document.getElementById("prayerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // إمّا URLSearchParams (أضمن لتفادي preflight)
     const params = new URLSearchParams();
     params.append('name', document.getElementById("name").value);
     params.append('fajr', document.getElementById("fajr").value);
@@ -50,24 +46,22 @@
     params.append('maghrib', document.getElementById("maghrib").value);
     params.append('isha', document.getElementById("isha").value);
 
-    // أو بديل: FormData (مقبول أيضًا وبسيط)
-    // const params = new FormData(form);
-
     const res = await fetch(scriptURL, {
       method: "POST",
-      body: params, // مهم: لا تضع headers يدوياً حتى لا يحدث preflight
+      body: params,           // مهم: لا تضع headers، دع المتصفّح يضبط الـ Content-Type تلقائيًا
     });
 
     if (res.ok) {
-      responseEl.classList.remove("hidden");
-      form.reset();
+      document.getElementById("response").classList.remove("hidden");
+      document.getElementById("prayerForm").reset();
     } else {
-      alert('فشل الإرسال. Status: ' + res.status);
+      alert('فشل الإرسال. كود الحالة: ' + res.status);
     }
   });
 </script>
 </body>
 </html>
+
 
 
 
